@@ -18,6 +18,5 @@ print(imp_treap.get_sum(0, 5))
 # print(imp_treap[2])
 ImplicitTreap.delete(imp_treap._root, 2)
 imp_treap.print()
-# print(imp_treap.print())
 
 # print(imp_treap[2])
