@@ -9,7 +9,7 @@
 Глвный недостаток - большой расход по памяти по сравнению с обычним массивом
 TODO не работает delete!
 """
-
+import graphviz as gv
 import random
 import copy
 
@@ -62,6 +62,11 @@ class ImplicitTreap:
 
     def get_sum(self, left, right):
         return ImplicitTreap.get_segment_sum(self._root, left, right)
+
+    def get_graph(self, format_type="gif"):
+        graph = gv.Graph(format=format_type)
+        graph = ImplicitTreap.create_graph(self._root, graph)[0]
+        return graph
 
     @staticmethod
     def get_size(tree: ImplicitTreapNode):
@@ -167,3 +172,20 @@ class ImplicitTreap:
         ImplicitTreap.print_tree(tree.left)
         print("Node with key: %s and priority: %s\n" % (tree.val, tree.priority))
         ImplicitTreap.print_tree(tree.right)
+
+    @staticmethod
+    def create_graph(tree: ImplicitTreapNode, graph: gv.Graph, add: int = 0):
+        if tree is None:
+            return graph, None
+        current_key = add + ImplicitTreapNode.get_left_size(tree)
+        label = "V: %s, P: %s" % (tree.val, round(tree.priority, 3))
+        graph.node(str(current_key), label=label)
+        first_key = ImplicitTreap.create_graph(tree.left, graph, add)[1]
+        new_add = add + 1 + ImplicitTreapNode.get_left_size(tree)
+        second_key = ImplicitTreap.create_graph(tree.right, graph, new_add)[1]
+        if first_key is not None:
+            graph.edge(str(current_key), str(first_key), color="blue")
+        if second_key is not None:
+            graph.edge(str(current_key), str(second_key), color="red")
+        return graph, current_key
+
