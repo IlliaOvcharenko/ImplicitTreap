@@ -1,3 +1,5 @@
 # ImplicitTreap
 Неявное декартово дерево
-![:)](ImplicitTreap/screens/screen_1.png)
+
+##Screens
+![:)](https://raw.githubusercontent.com/ElijahOvcharenko/ImplicitTreap/master/screens/screen_1.png)
