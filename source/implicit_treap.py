@@ -43,8 +43,19 @@ class ImplicitTreapNode:
 
 
 class ImplicitTreap:
-    def __init__(self, array):
-        self._root = ImplicitTreap.innit(array=array)
+    def __init__(self, array=None, root=None):
+        if root is not None:
+            self._root = root
+        else:
+            self._root = ImplicitTreap.innit(array=array)
+
+    def divide(self, index: int):
+        first_root, second_root = ImplicitTreap.split(self._root, index)
+        return ImplicitTreap(root=first_root), ImplicitTreap(root=second_root)
+
+    def union(self, tree):
+        root = ImplicitTreap.merge(self._root, tree._root)
+        return ImplicitTreap(root=root)
 
     def __setitem__(self, key, value):
         node = ImplicitTreapNode(value, random.random())
