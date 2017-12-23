@@ -21,7 +21,17 @@ class ImplicitTreapNode:
         self.left = None
         self.right = None
         self.size = 1
+        self.reverse = False
         self.segment_sum = val
+
+    def copy(self, new_node):
+
+        self.val = new_node.val
+        self.priority = new_node.priority
+        self.left = new_node.left
+        self.right = new_node.right
+        self.size = new_node.size
+        self.segment_sum = new_node.segment_sum
 
     @staticmethod
     def update_segment_sum(node):
@@ -46,8 +56,10 @@ class ImplicitTreap:
     def __init__(self, array=None, root=None):
         if root is not None:
             self._root = root
-        else:
+        elif array is not None:
             self._root = ImplicitTreap.innit(array=array)
+        else:
+            self._root = None
 
     def divide(self, index: int):
         first_root, second_root = ImplicitTreap.split(self._root, index)
@@ -79,6 +91,12 @@ class ImplicitTreap:
         graph = ImplicitTreap.create_graph(self._root, graph)[0]
         return graph
 
+    def erase(self, index):
+        ImplicitTreap.delete(self._root, index)
+
+    def invert(self, left, right):
+        ImplicitTreap.reverse(self._root, left, right)
+
     @staticmethod
     def get_size(tree: ImplicitTreapNode):
         return tree.size
@@ -96,6 +114,27 @@ class ImplicitTreap:
             return ImplicitTreap.get_item(tree.right, index, new_add)
         else:
             return ImplicitTreap.get_item(tree.left, index, add)
+
+    @staticmethod
+    def reverse(tree, left, right):
+        if right < left:
+            left, right = right, left
+        first_tree, second_tree = ImplicitTreap.split(tree, left)
+        second_tree, third_tree = ImplicitTreap.split(second_tree, right - left + 1)
+        second_tree.reverse = bool(True ^ second_tree.reverse)
+        ImplicitTreap.merge(first_tree, ImplicitTreap.merge(second_tree, third_tree))
+
+    @staticmethod
+    def push_reverse(tree: ImplicitTreapNode):
+        if tree is not None:
+            if tree.reverse:
+                tree.left, tree.right = tree.right, tree.left
+                tree.reverse = False
+                if tree.left is not None:
+                    tree.left.reverse = bool(True ^ tree.left.reverse)
+                if tree.right is not None:
+                    tree.right.reverse = bool(True ^ tree.right.reverse)
+
 
     @staticmethod
     def get_segment_sum(tree: ImplicitTreapNode, left: int, right: int):
@@ -117,14 +156,69 @@ class ImplicitTreap:
 
     @staticmethod
     def insert(origin_tree: ImplicitTreapNode, node: ImplicitTreapNode, index: int):
-        tree = copy.deepcopy(origin_tree)
-        first_tree, second_tree = ImplicitTreap.split(tree, index)
+        first_tree, second_tree = ImplicitTreap.split(origin_tree, index)
         return ImplicitTreap.merge(ImplicitTreap.merge(first_tree, node), second_tree)
 
     @staticmethod
-    def delete(tree, index):
-        node = ImplicitTreap.get_item(tree, index)
-        node = ImplicitTreap.merge(node.left, node.right)
+    def delete(tree, index, add=0):
+        """
+        TODO нужен ли здесь push_reverse? вот в чем вопрос
+        """
+        if tree is None:
+            return
+        current_key = add + ImplicitTreapNode.get_left_size(tree)
+        new_add = current_key + 1
+        left_key = float("inf")
+        right_key = float("inf")
+        if tree.left is not None:
+            left_key = add + ImplicitTreapNode.get_left_size(tree.left)
+        if tree.right is not None:
+            right_key = new_add + ImplicitTreapNode.get_left_size(tree.right)
+        if current_key == index:
+            try:
+                new_node = ImplicitTreap.merge(tree.left, tree.right)
+                tree.copy(new_node)
+                ImplicitTreapNode.update_size(tree)
+                ImplicitTreapNode.update_segment_sum(tree)
+            except Exception:
+                raise Exception("Delete last item in array")
+
+        elif left_key == index:
+            new_node = ImplicitTreap.merge(tree.left.left, tree.left.right)
+            tree.left = new_node
+
+            ImplicitTreapNode.update_size(tree)
+            ImplicitTreapNode.update_segment_sum(tree)
+
+        elif right_key == index:
+            new_node = ImplicitTreap.merge(tree.right.left, tree.right.right)
+            tree.right = new_node
+
+            ImplicitTreapNode.update_size(tree)
+            ImplicitTreapNode.update_segment_sum(tree)
+
+        else:
+            if current_key < index:
+                ImplicitTreap.delete(tree.right, index, new_add)
+                ImplicitTreapNode.update_size(tree)
+                ImplicitTreapNode.update_segment_sum(tree)
+            else:
+                ImplicitTreap.delete(tree.left, index, add)
+                ImplicitTreapNode.update_size(tree)
+                ImplicitTreapNode.update_segment_sum(tree)
+
+
+        # if current_key < index:
+        #     return ImplicitTreap.get_item(tree.right, index, new_add)
+        # else:
+        #     return ImplicitTreap.get_item(tree.left, index, add)
+        # node = ImplicitTreap.get_item(tree, index)
+        # new_node = ImplicitTreap.merge(node.left, node.right)
+        # if new_node is None:
+        #     node = None
+        #     del node
+        # else:
+        #     node.copy(new_node)
 
     @staticmethod
     def split(tree: ImplicitTreapNode, key: int, add: int = 0):
@@ -133,6 +227,7 @@ class ImplicitTreap:
         if tree is None:
             return None, None
 
+        ImplicitTreap.push_reverse(tree)
         current_key = add + ImplicitTreapNode.get_left_size(tree)
         if current_key < key:
             new_add = add + 1 + ImplicitTreapNode.get_left_size(tree)
@@ -160,6 +255,8 @@ class ImplicitTreap:
         сливает два дерева только если все ключи дерева first_tree меньше
         ключей дерева second_tree
         """
+        ImplicitTreap.push_reverse(first_tree)
+        ImplicitTreap.push_reverse(second_tree)
         if first_tree is None:
             return second_tree
         if second_tree is None:
@@ -180,6 +277,7 @@ class ImplicitTreap:
     def print_tree(tree: ImplicitTreapNode):
         if tree is None:
             return
+        ImplicitTreap.push_reverse(tree)
         ImplicitTreap.print_tree(tree.left)
         print("Node with key: %s and priority: %s\n" % (tree.val, tree.priority))
         ImplicitTreap.print_tree(tree.right)

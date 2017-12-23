@@ -6,7 +6,10 @@ import tkinter as tk
 
 class GUI:
     def __init__(self):
-        self.implicit_treap = ImplicitTreap([])
+        tree = ImplicitTreap(array=[1,2,3,4,5,6])
+        first, second = tree.divide(0)
+        second, third = second.divide(5)
+        self.implicit_treap = second
 
         graph = self.implicit_treap.get_graph()
         data = graph.pipe()
