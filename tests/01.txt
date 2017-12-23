@@ -1,0 +1,11 @@
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+insert 1 17 1
+print 1
