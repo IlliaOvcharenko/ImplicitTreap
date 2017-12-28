@@ -1,4 +1,5 @@
 import sys
+import time
 sys.path.append("../")
 from source.implicit_treap import ImplicitTreap
 
@@ -61,9 +62,18 @@ class TestInterpreter:
                 right = int(comm_arr[3])
                 tp_arr[treap_index].invert(left, right)
 
+            elif comm_arr[0] == "full_print":
+                treap_index = int(comm_arr[1]) - 1
+                print("")
+                tp_arr[treap_index].print()
+
             elif comm_arr[0] == "print":
                 treap_index = int(comm_arr[1]) - 1
-                tp_arr[treap_index].print()
+                array_of_items = []
+                print("")
+                tp_arr[treap_index].print(list=array_of_items, console_print=False)
+                print(array_of_items)
+                print("")
 
             elif comm_arr[0] == "number_of_treaps":
                 num = len(tp_arr)
@@ -74,21 +84,75 @@ class TestInterpreter:
                 index = int(comm_arr[2])
                 print(tp_arr[treap_index][index])
 
+            elif comm_arr[0] == "read_file":
+                file_name = comm_arr[1]
+                # try:
+                #     file = open(file_name, 'r')
+                #     for comm in file:
+                #         TestInterpreter.command_execute(comm, tp_arr)
+                #
+                # except:
+                #     print("No such file")
+
+                start_time = time.time()
+                TestInterpreter.file_mode(file_name, tp_arr)
+                end_time = time.time()
+                print("Execution time is " + str(end_time - start_time))
+
             elif comm_arr[0] == "help":
                 answer = """
 Functions:
-    size <index_of_treap>
-    insert <index_of_treap> <index_in_treap> <value>
+
+    size <index_of_treap> - получить размер указанной дерамиды с индексом index_of_treap.
+
+    insert <index_of_treap> <index_in_treap> <value> 
+    Вставить в дерамиду с индексом index_of_treap
+    значение value на позицию index_in_treap, при этом элемент который находится там не удаляется, 
+    а сдвигается влево.
+
     delete <index_of_treap> <index_of_item_in_treap>
-    get_sum <index_of_treap> <left_bound> <right_bound>
-    split <index_of_treap> <index_to_spit>
+    Удалить элемент с индексом 
+    index_of_item_in_treap из дерамиды с индексом index_of_treap, элементы сдигаются вправо, тем 
+    самым заполняя экзистенциальную пустоту внутри.
+    
+    get_sum <index_of_treap> <left_bound> <right_bound> 
+    Получить сумму на отрезке 
+    [left_bound, right_bound] (левая и правая границы включительно) в дерамиде с индексом 
+    index_of_treap .
+    
+    split <index_of_treap> <index_to_spit> 
+    Разбить дерамиду с индексом index_of_treap на две по индексу index_to_spit, выводит индексы 
+    полученных дерамид.
+     
     add_treap [ <values_to_add> ]
-    merge <index_of_first_treap> <index_of_second_treap>
+    Добавить новую дерамиду с элементами [ <values_to_add> ] (элементы для добавления можно 
+    перечислять через пробел), выводит индекс нового дерева.
+    
+    merge <index_of_first_treap> <index_of_second_treap> 
+    Слить две дерамиды с индексами index_of_first_treap и index_of_second_treap в одну дерамиду,
+    выводит индекс новой дерамиды.
+    
     reverse <index_of_treap> <left_bound> <right_bound>
+    Развернуть элементы на отрезке [left_bound, right_bound] (левая и правая границы включительно) 
+    в дерамиде с индексом index_of_treapв обратном порядке.
+    
     print <index_of_treap>
-    get_item <index_of_treap> <index_of_item_in_treap>
+    Вывести содержимое дерамиды с индексом index_of_treap в виде массива
+    
+    full_print <index_of_treap>
+    Вывести значение элементов и их приоритеты для дерамиды с индексом index_of_treap 
+    
+    get_item <index_of_treap> <index_of_item_in_treap> 
+    Получить элемент из дерамиды index_of_treap с индексом index_of_item_in_treap.
+    
     number_of_treaps
-    help - you are here :)
+    Вывести текущее количестов дерамид к которым можно обратиться.
+    
+    read_file <file_name>
+    Выполняет тест из файли с именем file_name
+    
+    help
+    Получить справку. Ты тут :)
                             """
                 print(answer)
         except Exception:

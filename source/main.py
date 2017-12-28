@@ -13,12 +13,5 @@ if mode == "gui":
     interface = gui.GUI()
 else:
     print("Interactive mode")
-    answer = input("Read test from file (type Y to agree) ")
-    if answer == "Y":
-        file_name = input("Enter file name: ")
-        it = [ImplicitTreap(root=None)]
-        TestInterpreter.file_mode(file_name, it)
-        TestInterpreter.console_mode(treap_array=it)
-    else:
-        TestInterpreter.console_mode()
+    TestInterpreter.console_mode()
 

@@ -80,8 +80,8 @@ class ImplicitTreap:
     def size(self):
         return ImplicitTreap.get_size(self._root)
 
-    def print(self, list=None):
-        ImplicitTreap.print_tree(self._root, list)
+    def print(self, list=None, console_print=True):
+        ImplicitTreap.print_tree(self._root, list, console_print=console_print)
 
     def get_sum(self, left, right):
         return ImplicitTreap.get_segment_sum(self._root, left, right)
@@ -274,15 +274,16 @@ class ImplicitTreap:
 
 
     @staticmethod
-    def print_tree(tree: ImplicitTreapNode, list=None):
+    def print_tree(tree: ImplicitTreapNode, list=None, console_print=True):
         if tree is None:
             return
         ImplicitTreap.push_reverse(tree)
-        ImplicitTreap.print_tree(tree.left, list=list)
-        print("Node with value: %s and priority: %s\n" % (tree.val, tree.priority))
+        ImplicitTreap.print_tree(tree.left, list=list, console_print=console_print)
+        if console_print:
+            print("Node with value: %s and priority: %s\n" % (tree.val, tree.priority))
         if list is not None:
             list.append(tree.val)
-        ImplicitTreap.print_tree(tree.right, list=list)
+        ImplicitTreap.print_tree(tree.right, list=list, console_print=console_print)
 
     @staticmethod
     def create_graph(tree: ImplicitTreapNode, graph: gv.Graph, add: int = 0):
