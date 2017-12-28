@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from source.implicit_treap import ImplicitTreap
+from source.gui_implicit_treap import GuiImplicitTreap
 from source.test_interpreter import TestInterpreter
 import graphviz as gv
 import random
@@ -9,10 +9,8 @@ import tkinter as tk
 
 class GUI:
     def __init__(self):
-        tree = ImplicitTreap(array=[1, 2, 3, 4, 5, 6])
-        first, second = tree.divide(0)
-        second, third = second.divide(5)
-        self.implicit_treap = second
+        tree = GuiImplicitTreap(array=[1, 2, 3, 4, 5, 6])
+        self.implicit_treap = tree
 
         graph = self.implicit_treap.get_graph()
         data = graph.pipe()
@@ -115,7 +113,7 @@ class GUI:
 
 
     def clean(self):
-        self.implicit_treap = ImplicitTreap([])
+        self.implicit_treap = GuiImplicitTreap([])
         self.update_graph()
 
     def add_random(self):
@@ -129,7 +127,7 @@ class GUI:
         self.update_graph()
 
     def add_from_file(self):
-        arr = [ImplicitTreap(root=None)]
+        arr = [GuiImplicitTreap(root=None)]
         file_name = self.entry_add_from_file.get()
         TestInterpreter.file_mode(file_name, arr)
         self.implicit_treap = arr[0]
