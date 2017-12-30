@@ -10,7 +10,6 @@
 TODO не работает delete!
 """
 import random
-import copy
 
 
 class ImplicitTreapNode:
