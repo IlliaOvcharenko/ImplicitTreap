@@ -129,8 +129,10 @@ class GUI:
     def add_from_file(self):
         arr = [GuiImplicitTreap(root=None)]
         file_name = self.entry_add_from_file.get()
-        TestInterpreter.file_mode(file_name, arr)
-        self.implicit_treap = arr[0]
+        interp = TestInterpreter(arr)
+        interp.file_mode(file_name)
+        result = interp.get_treap_array()[0]
+        self.implicit_treap = GuiImplicitTreap.from_implicit_treap(result)
         self.update_graph()
 
 

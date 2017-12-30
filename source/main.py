@@ -13,5 +13,6 @@ if mode == "gui":
     interface = gui.GUI()
 else:
     print("Interactive mode")
-    TestInterpreter.console_mode()
+    interp = TestInterpreter()
+    interp.console_mode()
 

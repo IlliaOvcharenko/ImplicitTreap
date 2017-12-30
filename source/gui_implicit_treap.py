@@ -29,3 +29,9 @@ class GuiImplicitTreap(ImplicitTreap):
         if second_key is not None:
             graph.edge(str(current_key), str(second_key), color="red")
         return graph, current_key
+
+    @staticmethod
+    def from_implicit_treap(tree: ImplicitTreap):
+        new_tree = GuiImplicitTreap()
+        new_tree._root = tree._root
+        return new_tree

@@ -6,84 +6,91 @@ from source.implicit_treap import ImplicitTreap
 
 
 class TestInterpreter:
+    def __init__(self, treap_array=None):
+        if treap_array is not None:
+            self.treap_array = treap_array
+        else:
+            self.treap_array = [ImplicitTreap()]
 
-    @staticmethod
-    def command_execute(com, tp_arr):
+    def get_treap_array(self):
+        return self.treap_array
+
+    def command_execute(self, com):
         try:
             com = com.strip()
             comm_arr = com.split(" ")
             if comm_arr[0] == "size":
                 treap_index = int(comm_arr[1]) - 1
-                print("Size is " + str(tp_arr[treap_index].size()))
+                print("Size is " + str(self.treap_array[treap_index].size()))
 
             elif comm_arr[0] == "insert":
                 treap_index = int(comm_arr[1]) - 1
                 index = int(comm_arr[3])
                 value = int(comm_arr[2])
-                tp_arr[treap_index][index] = value
+                self.treap_array[treap_index][index] = value
 
             elif comm_arr[0] == "delete":
                 treap_index = int(comm_arr[1]) - 1
                 index = int(comm_arr[2])
-                tp_arr[treap_index].erase(index)
+                self.treap_array[treap_index].erase(index)
 
             elif comm_arr[0] == "get_sum":
                 treap_index = int(comm_arr[1]) - 1
                 left = int(comm_arr[2])
                 right = int(comm_arr[3])
-                print("Sum is " + str(tp_arr[treap_index].get_sum(left, right)))
+                print("Sum is " + str(self.treap_array[treap_index].get_sum(left, right)))
 
             elif comm_arr[0] == "split":
                 treap_index = int(comm_arr[1]) - 1
                 index = int(comm_arr[2])
-                first, second = tp_arr[treap_index].divide(index)
-                tp_arr.append(first)
-                tp_arr.append(second)
-                length = len(tp_arr)
+                first, second = self.treap_array[treap_index].divide(index)
+                self.treap_array.append(first)
+                self.treap_array.append(second)
+                length = len(self.treap_array)
                 print("First part index is %s, second part index is %s" % (length - 1, length))
 
             elif comm_arr[0] == "add_treap":
                 values = map(int, comm_arr[1:])
-                tp_arr.append(ImplicitTreap(array=values))
-                index_of_new_item = len(tp_arr)
+                self.treap_array.append(ImplicitTreap(array=values))
+                index_of_new_item = len(self.treap_array)
                 print("New treap index is %s" % index_of_new_item)
 
             elif comm_arr[0] == "merge":
                 first_treap_index = int(comm_arr[1]) - 1
                 second_treap_index = int(comm_arr[2]) - 1
-                tp_arr.append(
-                    tp_arr[first_treap_index].union(tp_arr[second_treap_index]))
+                self.treap_array.append(
+                    self.treap_array[first_treap_index].union(self.treap_array[second_treap_index]))
 
-                index_of_new_item = len(tp_arr)
+                index_of_new_item = len(self.treap_array)
                 print("New treap index is %s" % index_of_new_item)
 
             elif comm_arr[0] == "reverse":
                 treap_index = int(comm_arr[1]) - 1
                 left = int(comm_arr[2])
                 right = int(comm_arr[3])
-                tp_arr[treap_index].invert(left, right)
+                self.treap_array[treap_index].invert(left, right)
 
             elif comm_arr[0] == "full_print":
                 treap_index = int(comm_arr[1]) - 1
                 print("")
-                tp_arr[treap_index].print()
+                self.treap_array[treap_index].print()
 
             elif comm_arr[0] == "print":
                 treap_index = int(comm_arr[1]) - 1
                 array_of_items = []
                 print("")
-                tp_arr[treap_index].print(list=array_of_items, console_print=False)
+                self.treap_array[treap_index].print(list=array_of_items, console_print=False)
                 print(array_of_items)
                 print("")
 
             elif comm_arr[0] == "number_of_treaps":
-                num = len(tp_arr)
+                num = len(self.treap_array)
                 print("There are %s treaps" % num)
 
             elif comm_arr[0] == "get_item":
                 treap_index = int(comm_arr[1]) - 1
                 index = int(comm_arr[2])
-                print(tp_arr[treap_index][index])
+                print(self.treap_array[treap_index][index])
 
             elif comm_arr[0] == "read_file":
                 file_name = comm_arr[1]
@@ -97,7 +104,7 @@ class TestInterpreter:
                 proc = psutil.Process()
                 start_time = time.time()
                 start_memory = proc.memory_info()[0]
-                TestInterpreter.file_mode(file_name, tp_arr)
+                self.file_mode(file_name)
                 end_time = time.time()
                 end_memory = proc.memory_info()[0]
                 print("Execution time is " + str(end_time - start_time))
@@ -107,6 +114,14 @@ class TestInterpreter:
                 print("")
                 print(" ".join(comm_arr[1:]))
                 print("")
+
+            elif comm_arr[0] == "clean":
+                self.treap_array = [ImplicitTreap()]
+
+            elif comm_arr[0] == "test":
+                file_name = "tests/" + comm_arr[1] + ".txt"
+                command = "read_file " + file_name
+                self.command_execute(command)
 
             elif comm_arr[0] == "help":
                 answer = """
@@ -166,46 +181,45 @@ Functions:
     read_file <file_name>
     Выполняет тест из файли с именем file_name.
     
+    test <test_name>
+    Выполняет команду read_file для теста test_name (test_name - название файла в папке tests без 
+    указания расширения .txt, эта информация подставляется автоманически)
+    
     # <string>
     Выводит входящюю строку без изменений.
     
     clean
     Удаляет все дерамиды, создается пустая дерамида с индексом 1. 
-    АХТУНГ! Выполнять перед тестами! Не пользоваться в самих тестах.
+    АХТУНГ! Используется в тестах.
     
     help
     Получить справку. Ты тут :)
                             """
                 print(answer)
+            else:
+                print("No such command, try one more time")
+
         except Exception as ex:
             print("Wrong command, try one more time")
             # print(ex)
 
-    @staticmethod
-    def file_mode(file_name, treap_array):
+    def file_mode(self, file_name):
         try:
             file = open(file_name, 'r')
             for comm in file:
-                if comm.strip() == "clean":
-                    treap_array = [ImplicitTreap(array=[])]
-                else:
-                    TestInterpreter.command_execute(comm, treap_array)
+                self.command_execute(comm)
         except:
             print("No such file.\nexit")
 
-    @staticmethod
-    def console_mode(treap_array=None):
-        str = ""
-        if treap_array is None:
-            treap_array = [ImplicitTreap(array=[1, 2, 3, 4, 5])]
-            str = "1, 2, 3, 4, 5"
+    def console_mode(self):
+        # str = ""
+        # if self.treap_array is None:
+        self.treap_array = [ImplicitTreap(array=[1, 2, 3, 4, 5])]
+        str = "1, 2, 3, 4, 5"
         print("For exit type 'exit'")
         print("If you need some help type 'help'")
         print("You have already treap with index 1 and values ["+ str +"]")
         comm = input("Enter command: ")
         while comm.strip() != "exit":
-            if comm.strip() == "clean":
-                treap_array = [ImplicitTreap(array=[])]
-            else:
-                TestInterpreter.command_execute(comm, treap_array)
+            self.command_execute(comm)
             comm = input("Enter command: ")
