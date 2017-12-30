@@ -119,6 +119,7 @@ class TestInterpreter:
                 self.treap_array = [ImplicitTreap()]
 
             elif comm_arr[0] == "test":
+                self.command_execute("clean")
                 file_name = "tests/" + comm_arr[1] + ".txt"
                 command = "read_file " + file_name
                 self.command_execute(command)
@@ -182,7 +183,7 @@ Functions:
     Выполняет тест из файли с именем file_name.
     
     test <test_name>
-    Выполняет команду read_file для теста test_name (test_name - название файла в папке tests без 
+    Выполняет команду clean и read_file для теста test_name (test_name - название файла в папке tests без 
     указания расширения .txt, эта информация подставляется автоманически)
     
     # <string>
