@@ -1,0 +1,13 @@
+# тест на добавление 10 элементов в дерамиду с индексом 2
+add_treap
+# Wait...
+insert 2 70 1
+insert 2 58 1
+insert 2 2 1
+insert 2 85 1
+insert 2 2 1
+insert 2 97 1
+insert 2 18 1
+insert 2 30 1
+insert 2 73 1
+insert 2 8 1
