@@ -178,8 +178,8 @@ Functions:
                             """
                 print(answer)
         except Exception as ex:
-            # print("Wrong command, try one more time")
-            print(ex)
+            print("Wrong command, try one more time")
+            # print(ex)
 
     @staticmethod
     def file_mode(file_name, treap_array):
