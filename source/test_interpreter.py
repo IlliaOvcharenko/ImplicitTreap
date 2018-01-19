@@ -21,27 +21,37 @@ class TestInterpreter:
             comm_arr = com.split(" ")
             if comm_arr[0] == "size":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 print("Size is " + str(self.treap_array[treap_index].size()))
 
             elif comm_arr[0] == "insert":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 index = int(comm_arr[3])
                 value = int(comm_arr[2])
                 self.treap_array[treap_index][index] = value
 
             elif comm_arr[0] == "delete":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 index = int(comm_arr[2])
                 self.treap_array[treap_index].erase(index)
 
             elif comm_arr[0] == "get_sum":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 left = int(comm_arr[2])
                 right = int(comm_arr[3])
                 print("Sum is " + str(self.treap_array[treap_index].get_sum(left, right)))
 
             elif comm_arr[0] == "split":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 index = int(comm_arr[2])
                 first, second = self.treap_array[treap_index].divide(index)
                 self.treap_array.append(first)
@@ -58,6 +68,8 @@ class TestInterpreter:
             elif comm_arr[0] == "merge":
                 first_treap_index = int(comm_arr[1]) - 1
                 second_treap_index = int(comm_arr[2]) - 1
+                if first_treap_index < 0 or second_treap_index < 0:
+                    raise IndexError
                 self.treap_array.append(
                     self.treap_array[first_treap_index].union(self.treap_array[second_treap_index]))
 
@@ -66,17 +78,23 @@ class TestInterpreter:
 
             elif comm_arr[0] == "reverse":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 left = int(comm_arr[2])
                 right = int(comm_arr[3])
                 self.treap_array[treap_index].invert(left, right)
 
             elif comm_arr[0] == "full_print":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 print("")
                 self.treap_array[treap_index].print()
 
             elif comm_arr[0] == "print":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 array_of_items = []
                 print("")
                 self.treap_array[treap_index].print(list=array_of_items, console_print=False)
@@ -89,6 +107,8 @@ class TestInterpreter:
 
             elif comm_arr[0] == "get_item":
                 treap_index = int(comm_arr[1]) - 1
+                if treap_index < 0:
+                    raise IndexError
                 index = int(comm_arr[2])
                 print(self.treap_array[treap_index][index])
 
@@ -127,10 +147,14 @@ class TestInterpreter:
             elif comm_arr[0] == "help":
                 answer = """
 Functions:
+    АХНУНГ! ФУНКЦИИ MERGE, SPLIT (ВСЕ КОТОРЫЕ СОЗДАЮТ НОВЫЕ ДЕРАМИДЫ ИЗ СТАРЫХ) МОГУТ ИЗМЕНИТЬ
+    СОДЕРЖИМОЕ ДЕРАМИД КОТОРЫЕ ПЕЕРДАЮТСЯ КАК АРГУМЕНТЫ. 
+    Это связанно с тем, что дерамиды передаются по ссылке, а не копируется; дерамида не 
+    персистентная
 
     size <index_of_treap> - получить размер указанной дерамиды с индексом index_of_treap.
 
-    insert <index_of_treap> <index_in_treap> <value> 
+    insert <index_of_treap> <value> <index_in_treap> 
     Вставить в дерамиду с индексом index_of_treap
     значение value на позицию index_in_treap, при этом элемент который находится там не удаляется, 
     а сдвигается влево.
@@ -149,8 +173,8 @@ Functions:
     split <index_of_treap> <index_to_spit> 
     Разбить дерамиду с индексом index_of_treap на две по индексу index_to_spit, выводит индексы 
     полученных дерамид. 
-    АХТУНГ! Входящая дерамиды поменяет поменять свое содержимое (в ней останется первая 
-    часть, так как дерамида передается по ссылке, а не копируется; дерамида не персистентная)
+    АХТУНГ! Входящая дерамиды поменять свое содержимое (в ней останется первая часть, так как 
+    дерамида передается по ссылке, а не копируется; дерамида не персистентная)
      
     add_treap [ <values_to_add> ]
     Добавить новую дерамиду с элементами [ <values_to_add> ] (элементы для добавления можно 
@@ -160,7 +184,7 @@ Functions:
     Слить две дерамиды с индексами index_of_first_treap и index_of_second_treap в одну дерамиду,
     выводит индекс новой дерамиды. 
     АХТУНГ! Не стоит сливать одинаковые куски одной и той же дерамид, так как
-    это приведет к бесконечной рекурсии; всходящие дерамиды могут поменять свое содержимое (дерамиды
+    это приведет к бесконечной рекурсии; входящие дерамиды могут поменять свое содержимое (дерамиды
     передаются по ссылке, а не копируется; дерамида не персистентная)
     
     reverse <index_of_treap> <left_bound> <right_bound>
